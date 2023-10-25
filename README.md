@@ -18,3 +18,8 @@ poetry install
 
 # Run the RoboDog script
 python robodog/__init__.py
+```
+
+
+## References
+1. [Mujoco](https://mujoco.readthedocs.io/en/stable/index.html)
