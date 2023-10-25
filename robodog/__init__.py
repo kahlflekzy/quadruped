@@ -1,19 +1,28 @@
+import os
 import time
 
 import mujoco.viewer
 
 if __name__ == "__main__":
-    model = mujoco.MjModel.from_xml_path('/home/altair/PycharmProjects/robodog/robodog/model/scene.xml')
+    cwd = os.getcwd()
+    model = mujoco.MjModel.from_xml_path(filename=f'{cwd}/robodog/model/scene.xml', assets=None)
+
     data = mujoco.MjData(model)
+    copy = data.qpos.copy()
+    mujoco.mj_kinematics(model, data)
+
+    ctx = mujoco.GLContext(2000, 2000)
+    ctx.make_current()
 
     with mujoco.viewer.launch_passive(model, data) as viewer:
         start = time.time()
-        # mujoco.mj_step(model, data)
-        # print(dir(data))
-        while viewer.is_running() and time.time() - start < 30:
+        mujoco.mj_step(model, data)
+        while viewer.is_running():
             step_start = time.time()
-            # print(data.time,data.)
+
+            data.qpos = copy.copy()
             mujoco.mj_step(model, data)
+            mujoco.mj_kinematics(model, data)
 
             with viewer.lock():
                 viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = int(data.time % 2)
